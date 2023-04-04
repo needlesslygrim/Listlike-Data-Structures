@@ -3,27 +3,21 @@
 #include "list.h"
 
 int main(void) {
-  struct node_t *head = (struct node_t *)malloc(sizeof(struct node_t));
-  head->val = 0;
-  head->previous = NULL;
-  head->next = NULL;
-
-  struct node_t *one = (struct node_t *)malloc(sizeof(struct node_t));
-  one->previous = head;
-  one->val = 1;
+  struct node_t *head = initialise_node(0, NULL, NULL);
+  struct node_t *one = initialise_node(1, NULL, head);
+  struct node_t *two = initialise_node(2, NULL, one);
+  struct node_t *three = initialise_node(3, NULL, two);
+  struct node_t *four = initialise_node(4, NULL , three);
+  struct node_t *five = initialise_node(5, NULL, four);
+  
   head->next = one;
-
-  struct node_t *two = (struct node_t *)malloc(sizeof(struct node_t));
-  two->previous = one;
-  two->next = NULL;
-  two->val = 2;
   one->next = two;
-  print_from_head(head);
-  push_val(4, two);
-  print_from_head(head);
+  two->next = three;
+  three->next = four;
+  four->next = five;
 
-  pop_previous_node(two->next);
-  print_from_head(head);
-
-  delete_list(head);
+  struct list_t list = { head, five, 4};
+  print_list(&list);
+  // print_node(get(&list, 0));
+  print_list_reverse(&list);
 }

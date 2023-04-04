@@ -3,4 +3,4 @@ project(List C)
 
 set(CMAKE_C_STANDARD 17)
 
-add_executable(List main.c list.c list.h)
+add_executable(List main.c list.c list.h node.c node.h)
