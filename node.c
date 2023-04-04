@@ -2,10 +2,10 @@
 // Created by erickth on 04/04/23.
 //
 
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "node.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 struct node_t *initialise_node(int val, struct node_t *next,
 							   struct node_t *previous) {

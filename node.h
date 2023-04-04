@@ -16,4 +16,4 @@ struct node_t *initialise_node(int val, struct node_t *next,
 
 void print_node(struct node_t *node);
 
-#endif //LIST_NODE_H
+#endif // LIST_NODE_H
