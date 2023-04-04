@@ -50,6 +50,7 @@ void delete_list(struct list_t *list) {
 	}
 
 	free(current_node);
+	free(list);
 }
 
 struct node_t *get(struct list_t *list, unsigned long long index) {
@@ -86,9 +87,21 @@ void push(int val, struct list_t *list) {
 int pop(struct list_t *list) {
 	struct node_t *tail = list->tail;
 
+
 	int val = tail->val;
+
+	if (list->head == list->tail) {
+		free(list->head);
+		list->head = NULL;
+		list->tail = NULL;
+		return val;
+	}
+
 	list->len--;
+
 	tail->previous->next = NULL;
+	list->tail = tail->previous;
+
 	free(tail);
 
 	return val;
