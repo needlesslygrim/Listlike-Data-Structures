@@ -9,6 +9,37 @@
 
 #include "node.h"
 
+struct list_t *initialise_list(int *vals, unsigned long long length) {
+	struct list_t *list = malloc(sizeof(struct list_t));
+	if (list == NULL) {
+		fprintf(stderr, "Could not initialise list\n");
+		exit(1);
+	}
+
+	struct node_t *head = initialise_node(vals[0], NULL, NULL);
+	if (length == 0) {
+		return head;
+	}
+
+	list->head = head;
+
+	struct node_t *previous = initialise_node(vals[1], NULL, head);
+	head->next = previous;
+
+	for (int i = 2; i < length - 1; i++) {
+		struct node_t *node = initialise_node(vals[i], NULL, previous);
+
+		previous->next = node;
+		previous = node;
+	}
+
+	struct node_t *tail = initialise_node(vals[length - 1], NULL, previous);
+	previous->next = tail;
+	list->tail = tail;
+
+	return list;
+}
+
 void delete_list(struct list_t *list) {
 	struct node_t *current_node = list->head;
 	struct node_t *next_node;
@@ -86,7 +117,7 @@ int check_list_validity(struct list_t *list) {
 
 int print_list(struct list_t *list) {
 	int validity = check_list_validity(list);
-	if (!validity) {
+	if (validity) {
 		return validity;
 	}
 
@@ -106,7 +137,7 @@ int print_list_reverse(struct list_t *list) {
 	struct node_t *current_node = list->tail;
 
 	int validity = check_list_validity(list);
-	if (!validity) {
+	if (validity) {
 		return validity;
 	}
 
