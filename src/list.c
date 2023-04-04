@@ -17,16 +17,18 @@ struct list_t *initialise_list(int *vals, unsigned long long length) {
 	}
 
 	struct node_t *head = initialise_node(vals[0], NULL, NULL);
+	list->head = head;
+
 	if (length == 0) {
-		return head;
+		return list;
 	}
 
-	list->head = head;
+
 
 	struct node_t *previous = initialise_node(vals[1], NULL, head);
 	head->next = previous;
 
-	for (int i = 2; i < length - 1; i++) {
+	for (unsigned long long i = 2; i < length - 1; i++) {
 		struct node_t *node = initialise_node(vals[i], NULL, previous);
 
 		previous->next = node;
@@ -67,7 +69,7 @@ struct node_t *get(struct list_t *list, unsigned long long index) {
 	}
 	// index--;
 
-	for (int i = 0; i < index; i++) {
+	for (unsigned long long i = 0; i < index; i++) {
 		current_node = current_node->next;
 		// printf("Current loop iteration: %d, \t", i);
 		// print_node(current_node);
