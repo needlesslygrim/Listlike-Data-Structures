@@ -24,7 +24,6 @@ struct list_t *initialise_list(int *vals, unsigned long long length) {
 	}
 
 
-
 	struct node_t *previous = initialise_node(vals[1], NULL, head);
 	head->next = previous;
 
@@ -76,6 +75,31 @@ struct node_t *get(struct list_t *list, unsigned long long index) {
 	}
 
 	return current_node;
+}
+
+int insert(struct list_t *list, unsigned long long index, int val) {
+	if (index > list->len) {
+		return 1;
+	}
+
+	struct node_t *new_node = initialise_node(val, NULL, NULL);
+
+	if (index == 0) {
+		struct node_t *old_head = list->head;
+		list->head = new_node;
+		new_node->next = old_head;
+		old_head->previous = new_node;
+		return 0;
+	}
+
+	struct node_t *node = get(list, index);
+	struct node_t *prev = node->previous;
+	prev->next = new_node;
+	new_node->previous = prev;
+	new_node->next = node;
+	node->previous = new_node;
+
+	return 0;
 }
 
 void push(int val, struct list_t *list) {

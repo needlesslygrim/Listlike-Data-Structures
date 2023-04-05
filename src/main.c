@@ -4,7 +4,7 @@
 #include "node.h"
 
 int main(void) {
-	int vals[6] = {0, 1, 2, 3, 4, 5};
+	int vals[6] = {0, 2, 3, 4, 5};
 	struct list_t *list = initialise_list(vals, 6);
 //	struct node_t *head = initialise_node(0, NULL, NULL);
 //	struct node_t *one = initialise_node(1, NULL, head);
@@ -20,6 +20,7 @@ int main(void) {
 //	four->next = five;
 //
 //	struct list_t list = {head, five, 5};
+	insert(list, 1, 1);
 	print_list(list);
 	// print_node(get(&list, 0));
 	print_list_reverse(list);
