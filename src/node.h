@@ -1,9 +1,5 @@
-//
-// Created by erickth on 04/04/23.
-//
-
-#ifndef LIST_NODE_H
-#define LIST_NODE_H
+#ifndef NODE_H
+#define NODE_H
 
 #include <stdint.h>
 
@@ -18,4 +14,4 @@ struct node_t *initialise_node(int32_t val, struct node_t *next,
 
 void print_node(struct node_t *node);
 
-#endif // LIST_NODE_H
+#endif // NODE_H

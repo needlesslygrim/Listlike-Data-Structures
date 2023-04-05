@@ -1,9 +1,5 @@
-//
-// Created by erickth on 04/04/23.
-//
-
-#ifndef LIST_LIST_H
-#define LIST_LIST_H
+#ifndef LIST_H
+#define LIST_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -30,4 +26,4 @@ int check_list_validity(struct list_t *list);
 int print_list(struct list_t *list);
 int print_list_reverse(struct list_t *list);
 
-#endif // LIST_LIST_H
+#endif // LIST_H
