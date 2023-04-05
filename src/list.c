@@ -134,6 +134,29 @@ int pop(struct list_t *list) {
 	return val;
 }
 
+int remove_node(struct list_t *list, unsigned long long index) {
+	if (index == list->len) { return pop(list); }
+
+
+	if (index == 0) {
+		struct node_t *head = get(list, 0);
+		list->head = head->next;
+		list->head->previous = NULL;
+		free(head);
+	}
+
+	struct node_t *node = get(list, index);
+	int value = node->val;
+	struct node_t *prev = node->previous;
+	struct node_t *next = node->next;
+
+	prev->next = next;
+	next->previous = prev;
+
+	free(node);
+
+	return value;
+}
 /* Checks whether a given list is valid or not.
  *
  * Returns:
