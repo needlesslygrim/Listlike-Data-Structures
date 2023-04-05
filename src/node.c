@@ -4,10 +4,11 @@
 
 #include "node.h"
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-struct node_t *initialise_node(int val, struct node_t *next,
+struct node_t *initialise_node(int32_t val, struct node_t *next,
 							   struct node_t *previous) {
 	struct node_t *node = malloc(sizeof(struct node_t));
 

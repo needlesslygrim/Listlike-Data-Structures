@@ -5,22 +5,25 @@
 #ifndef LIST_LIST_H
 #define LIST_LIST_H
 
+#include <stddef.h>
+#include <stdint.h>
+
 struct list_t {
 	struct node_t *head;
 	struct node_t *tail;
-	unsigned long long len;
+	size_t len;
 };
 
-struct list_t *initialise_list(int *vals, unsigned long long length);
+struct list_t *initialise_list(int32_t *vals, size_t length);
 void delete_list(struct list_t *list);
 
-struct node_t *get(struct list_t *list, unsigned long long index);
+struct node_t *get(struct list_t *list, size_t index);
 
-void push(struct list_t *list, int val);
-int insert(struct list_t *list,  unsigned long long index,int val);
+void push(struct list_t *list, int32_t val);
+int insert(struct list_t *list, size_t index, int32_t val);
 
 int pop(struct list_t *list);
-int remove_node(struct list_t *list, unsigned long long index);
+int remove_node(struct list_t *list, size_t index);
 
 int check_list_validity(struct list_t *list);
 

@@ -4,12 +4,13 @@
 
 #include "list.h"
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "node.h"
 
-struct list_t *initialise_list(int *vals, unsigned long long length) {
+struct list_t *initialise_list(int32_t *vals, size_t length) {
 	struct list_t *list = malloc(sizeof(struct list_t));
 	if (list == NULL) {
 		fprintf(stderr, "Could not initialise list\n");
@@ -24,18 +25,18 @@ struct list_t *initialise_list(int *vals, unsigned long long length) {
 		return list;
 	}
 
-
 	struct node_t *previous_node = initialise_node(vals[1], NULL, head);
 	head->next = previous_node;
 
-	for (unsigned long long i = 2; i < length - 1; i++) {
+	for (size_t i = 2; i < length - 1; i++) {
 		struct node_t *node = initialise_node(vals[i], NULL, previous_node);
 
 		previous_node->next = node;
 		previous_node = node;
 	}
 
-	struct node_t *tail = initialise_node(vals[length - 1], NULL, previous_node);
+	struct node_t *tail =
+		initialise_node(vals[length - 1], NULL, previous_node);
 	previous_node->next = tail;
 	list->tail = tail;
 
@@ -55,7 +56,7 @@ void delete_list(struct list_t *list) {
 	free(list);
 }
 
-struct node_t *get(struct list_t *list, unsigned long long index) {
+struct node_t *get(struct list_t *list, size_t index) {
 	if (index > list->len) {
 		return NULL;
 	}
@@ -66,14 +67,14 @@ struct node_t *get(struct list_t *list, unsigned long long index) {
 		return current_node;
 	}
 
-	for (unsigned long long i = 0; i < index; i++) {
+	for (size_t i = 0; i < index; i++) {
 		current_node = current_node->next;
 	}
 
 	return current_node;
 }
 
-int insert(struct list_t *list, unsigned long long index, int val) {
+int insert(struct list_t *list, size_t index, int32_t val) {
 	if (index > list->len) {
 		return 1;
 	}
@@ -98,7 +99,7 @@ int insert(struct list_t *list, unsigned long long index, int val) {
 	return 0;
 }
 
-void push(struct list_t *list, int val) {
+void push(struct list_t *list, int32_t val) {
 	struct node_t *node = initialise_node(val, NULL, list->tail);
 
 	list->tail->next = node;
@@ -106,11 +107,10 @@ void push(struct list_t *list, int val) {
 	list->len++;
 }
 
-int pop(struct list_t *list) {
+int32_t pop(struct list_t *list) {
 	struct node_t *tail = list->tail;
 
-
-	int val = tail->val;
+	int32_t val = tail->val;
 
 	if (list->head == list->tail) {
 		free(list->head);
@@ -129,9 +129,10 @@ int pop(struct list_t *list) {
 	return val;
 }
 
-int remove_node(struct list_t *list, unsigned long long index) {
-	if (index == list->len) { return pop(list); }
-
+int32_t remove_node(struct list_t *list, size_t index) {
+	if (index == list->len) {
+		return pop(list);
+	}
 
 	if (index == 0) {
 		struct node_t *head = get(list, 0);
@@ -161,7 +162,7 @@ int remove_node(struct list_t *list, unsigned long long index) {
  * 3 if the head == NULL;
  */
 
-int check_list_validity(struct list_t *list) {
+int32_t check_list_validity(struct list_t *list) {
 	if (list == NULL) {
 		return 1;
 	} else if (list->head == NULL) {
@@ -173,7 +174,7 @@ int check_list_validity(struct list_t *list) {
 	return 0;
 }
 
-int print_list(struct list_t *list) {
+int32_t print_list(struct list_t *list) {
 	int validity = check_list_validity(list);
 	if (validity) {
 		return validity;
@@ -191,10 +192,10 @@ int print_list(struct list_t *list) {
 	return 0;
 }
 
-int print_list_reverse(struct list_t *list) {
+int32_t print_list_reverse(struct list_t *list) {
 	struct node_t *current_node = list->tail;
 
-	int validity = check_list_validity(list);
+	int32_t validity = check_list_validity(list);
 	if (validity) {
 		return validity;
 	}
