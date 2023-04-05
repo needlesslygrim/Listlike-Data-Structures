@@ -152,7 +152,7 @@ int remove_node(struct list_t *list, unsigned long long index) {
 
 	prev->next = next;
 	next->previous = prev;
-
+	list->len--;
 	free(node);
 
 	return value;
