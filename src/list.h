@@ -16,7 +16,7 @@ void delete_list(struct list_t *list);
 
 struct node_t *get(struct list_t *list, unsigned long long index);
 
-void push(int val, struct list_t *list);
+void push(struct list_t *list, int val);
 int insert(struct list_t *list,  unsigned long long index,int val);
 
 int pop(struct list_t *list);

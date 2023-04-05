@@ -25,18 +25,18 @@ struct list_t *initialise_list(int *vals, unsigned long long length) {
 	}
 
 
-	struct node_t *previous = initialise_node(vals[1], NULL, head);
-	head->next = previous;
+	struct node_t *previous_node = initialise_node(vals[1], NULL, head);
+	head->next = previous_node;
 
 	for (unsigned long long i = 2; i < length - 1; i++) {
-		struct node_t *node = initialise_node(vals[i], NULL, previous);
+		struct node_t *node = initialise_node(vals[i], NULL, previous_node);
 
-		previous->next = node;
-		previous = node;
+		previous_node->next = node;
+		previous_node = node;
 	}
 
-	struct node_t *tail = initialise_node(vals[length - 1], NULL, previous);
-	previous->next = tail;
+	struct node_t *tail = initialise_node(vals[length - 1], NULL, previous_node);
+	previous_node->next = tail;
 	list->tail = tail;
 
 	return list;
@@ -61,18 +61,13 @@ struct node_t *get(struct list_t *list, unsigned long long index) {
 	}
 
 	struct node_t *current_node = list->head;
-	// print_node(current_node);
 
 	if (index == 0) {
 		return current_node;
-		// printf("Index is 0, returning head");
 	}
-	// index--;
 
 	for (unsigned long long i = 0; i < index; i++) {
 		current_node = current_node->next;
-		// printf("Current loop iteration: %d, \t", i);
-		// print_node(current_node);
 	}
 
 	return current_node;
@@ -94,16 +89,16 @@ int insert(struct list_t *list, unsigned long long index, int val) {
 	}
 
 	struct node_t *node = get(list, index);
-	struct node_t *prev = node->previous;
-	prev->next = new_node;
-	new_node->previous = prev;
+	struct node_t *previous_node = node->previous;
+	previous_node->next = new_node;
+	new_node->previous = previous_node;
 	new_node->next = node;
 	node->previous = new_node;
 
 	return 0;
 }
 
-void push(int val, struct list_t *list) {
+void push(struct list_t *list, int val) {
 	struct node_t *node = initialise_node(val, NULL, list->tail);
 
 	list->tail->next = node;
@@ -147,11 +142,11 @@ int remove_node(struct list_t *list, unsigned long long index) {
 
 	struct node_t *node = get(list, index);
 	int value = node->val;
-	struct node_t *prev = node->previous;
-	struct node_t *next = node->next;
+	struct node_t *previous_node = node->previous;
+	struct node_t *next_node = node->next;
 
-	prev->next = next;
-	next->previous = prev;
+	previous_node->next = next_node;
+	next_node->previous = previous_node;
 	list->len--;
 	free(node);
 
