@@ -16,6 +16,7 @@ struct list_t *initialise_list(int *vals, unsigned long long length) {
 		exit(1);
 	}
 
+	list->len = length;
 	struct node_t *head = initialise_node(vals[0], NULL, NULL);
 	list->head = head;
 
