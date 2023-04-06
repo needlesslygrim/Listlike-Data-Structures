@@ -24,6 +24,6 @@ int remove_node(struct list_t *list, size_t index);
 int check_list_validity(struct list_t *list);
 
 int print_list(struct list_t *list);
-int print_list_reverse(struct list_t *list);
+int print_list_reversed(struct list_t *list);
 
 #endif // LIST_H

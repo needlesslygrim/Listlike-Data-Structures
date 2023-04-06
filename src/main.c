@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 
 #include "list.h"
 #include "node.h"
@@ -7,6 +8,7 @@ int main(void) {
 	size_t hello;
 	int32_t vals[6] = {0, 2, 3, 4, 5};
 	struct list_t *list = initialise_list(vals, 5);
+	print_node(list->head);
 	//	struct node_t *head = initialise_node(0, NULL, NULL);
 	//	struct node_t *one = initialise_node(1, NULL, head);
 	//	struct node_t *two = initialise_node(2, NULL, one);
@@ -25,6 +27,6 @@ int main(void) {
 	remove_node(list, 1);
 	print_list(list);
 	// print_node(get(&list, 0));
-	print_list_reverse(list);
+	print_list_reversed(list);
 	delete_list(list);
 }
