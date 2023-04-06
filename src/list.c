@@ -1,14 +1,9 @@
-//
-// Created by erickth on 04/04/23.
-//
-
-#include "list.h"
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "node.h"
+#include "list.h"
 
 struct list_t *initialise_list(int32_t *vals, size_t length) {
 	struct list_t *list = malloc(sizeof(struct list_t));

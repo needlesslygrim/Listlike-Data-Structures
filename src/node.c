@@ -1,12 +1,8 @@
-//
-// Created by erickth on 04/04/23.
-//
-
-#include "node.h"
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "node.h"
 
 struct node_t *initialise_node(int32_t val, struct node_t *next,
 							   struct node_t *previous) {
