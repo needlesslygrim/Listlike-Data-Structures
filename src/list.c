@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "node.h"
 #include "list.h"
+#include "node.h"
 
 /*
  * Initialise a new list with values as given in the array `vals`, with length
@@ -15,7 +15,7 @@
  * struct list_t *list = initialise_list(vals, 6);
  * ...
  * delete_list(list);
-*/
+ */
 struct list_t *initialise_list(int32_t *vals, size_t length) {
 	struct list_t *list = malloc(sizeof(struct list_t));
 	if (list == NULL) {
@@ -58,7 +58,7 @@ struct list_t *initialise_list(int32_t *vals, size_t length) {
  * struct list_t *list = initialise_list(vals, 6);
  * ...
  * delete_list(list);
-*/
+ */
 void delete_list(struct list_t *list) {
 	struct node_t *current_node = list->head;
 	struct node_t *next_node;
@@ -79,7 +79,7 @@ void delete_list(struct list_t *list) {
  * Example use:
  * struct node_t *node = list.get(3);
  * node->val++;
-*/
+ */
 struct node_t *get(struct list_t *list, size_t index) {
 	if (index > list->len) {
 		return NULL;
@@ -110,7 +110,7 @@ struct node_t *get(struct list_t *list, size_t index) {
  * Returns:
  * - 0 if successful
  * - 1 if index given > len
-*/
+ */
 int insert(struct list_t *list, size_t index, int32_t val) {
 	if (index > list->len) {
 		return 1;
@@ -144,7 +144,7 @@ int insert(struct list_t *list, size_t index, int32_t val) {
  * print_list(list);
  * push(list, 12);
  * print_list();
-*/
+ */
 void push(struct list_t *list, int32_t val) {
 	struct node_t *node = initialise_node(val, NULL, list->tail);
 
@@ -185,7 +185,8 @@ int32_t pop(struct list_t *list) {
 }
 
 /*
- * Pop the node at the given index from the list, its value will be returned. Memory required for tail of list shall be `free`d.
+ * Pop the node at the given index from the list, its value will be returned.
+ * Memory required for tail of list shall be `free`d.
  *
  * Example use:
  * print_list(list)
@@ -265,7 +266,7 @@ int32_t print_list(struct list_t *list) {
 
 /*
  * Prints out a list from tail->head, returns the value that is returned by
-* check_validity when called with the list passed.
+ * check_validity when called with the list passed.
  */
 int32_t print_list_reversed(struct list_t *list) {
 	struct node_t *current_node = list->tail;

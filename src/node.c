@@ -40,6 +40,6 @@ struct node_t *initialise_node(int32_t val, struct node_t *next,
  * }
  */
 void print_node(struct node_t *node) {
-	printf("Node {\n  val: %d,\n  next: %ld,\n  previous: %ld }\n", node->val,
-		   (size_t) node->next, (size_t) node->previous);
+	printf("Node {\n  val: %d,\n  next: %ld,\n  previous: %ld\n}\n", node->val,
+		   (size_t)node->next, (size_t)node->previous);
 }
