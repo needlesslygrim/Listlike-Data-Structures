@@ -16,16 +16,12 @@
  * ...
  * delete_list(list);
  */
-struct list_t *initialise_list(int32_t *vals, size_t length) {
-	struct list_t *list = malloc(sizeof(struct list_t));
-	if (list == NULL) {
-		fprintf(stderr, "Could not initialise list\n");
-		exit(1);
-	}
+struct list_t initialise_list(int32_t *vals, size_t length) {
+	struct list_t list = { NULL, NULL, length };
 
-	list->len = length;
-	struct node_t *head = initialise_node(vals[0], NULL, NULL);
-	list->head = head;
+	list.len = length;
+	struct node_t *head = initialise_node((length > 0) ? vals[0] : 0, NULL, NULL);
+	list.head = head;
 
 	if (length == 0) {
 		return list;
@@ -44,7 +40,7 @@ struct list_t *initialise_list(int32_t *vals, size_t length) {
 	struct node_t *tail =
 		initialise_node(vals[length - 1], NULL, previous_node);
 	previous_node->next = tail;
-	list->tail = tail;
+	list.tail = tail;
 
 	return list;
 }
@@ -69,7 +65,10 @@ void delete_list(struct list_t *list) {
 	}
 
 	free(current_node);
-	free(list);
+	list->head = NULL;
+	list->tail = NULL;
+	list->len = 0;
+//	free(list);
 }
 
 /*

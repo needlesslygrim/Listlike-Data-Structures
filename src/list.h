@@ -10,7 +10,7 @@ struct list_t {
 	size_t len;
 };
 
-struct list_t *initialise_list(int32_t *vals, size_t length);
+struct list_t initialise_list(int32_t *vals, size_t length);
 void delete_list(struct list_t *list);
 
 struct node_t *get(struct list_t *list, size_t index);
