@@ -285,4 +285,11 @@ _pkginfo.txt
 
 *.idea/
 *idea*
+<<<<<<< HEAD
 cmake-build-debug-coverage
+=======
+
+Debug/
+Release/
+cmake-build-debug-coverage/
+>>>>>>> ad39d4d (Rewrite basics in C++)

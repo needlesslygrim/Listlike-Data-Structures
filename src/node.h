@@ -1,17 +1,24 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <stdint.h>
+#include <cstdint>
 
-struct node_t {
-	int32_t val;
-	struct node_t *next;
-	struct node_t *previous;
+class Node {
+  private:
+	int32_t _val;
+	Node *_next;
+	Node *_previous;
+
+  public:
+	Node(int32_t val, Node *next, Node *previous);
+	void print() const;
+
+	int32_t getVal() const;
+	void setVal(int32_t val);
+	Node *getNext() const;
+	void setNext(Node *next);
+	Node *getPrevious() const;
+	void setPrevious(Node *previous);
 };
-
-struct node_t *initialise_node(int32_t val, struct node_t *next,
-							   struct node_t *previous);
-
-void print_node(struct node_t *node);
 
 #endif // NODE_H

@@ -1,8 +1,31 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "node.h"
+#include <cstddef>
+#include <cstdint>
+
+class List {
+  private:
+	Node *head;
+	Node *tail;
+	size_t len;
+  public:
+	List(int32_t *vals, size_t length);
+	~List();
+	Node *get();
+
+	void push(int32_t val);
+	int insert(size_t index, int32_t val);
+
+	int pop();
+	int remove(size_t index);
+
+	int check_list_validity();
+
+	int print();
+	int print_reversed();
+};
 
 struct list_t {
 	struct node_t *head;
