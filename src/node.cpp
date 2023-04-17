@@ -33,4 +33,3 @@ void Node::setNext(Node *next) { _next = next; }
 
 Node *Node::getPrevious() const { return _previous; }
 void Node::setPrevious(Node *previous) { _previous = previous; }
-

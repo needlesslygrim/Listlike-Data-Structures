@@ -7,13 +7,17 @@
 
 class List {
   private:
-	Node *head;
-	Node *tail;
-	size_t len;
+	Node *_head;
+	Node *_tail;
+	size_t _len;
+
   public:
 	List(int32_t *vals, size_t length);
 	~List();
-	Node *get();
+	Node *get(size_t index);
+	Node *get_head();
+	Node *get_tail();
+	size_t len();
 
 	void push(int32_t val);
 	int insert(size_t index, int32_t val);
@@ -21,7 +25,7 @@ class List {
 	int pop();
 	int remove(size_t index);
 
-	int check_list_validity();
+	int is_valid();
 
 	int print();
 	int print_reversed();
