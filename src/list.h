@@ -17,7 +17,7 @@ class List {
 	Node *get(size_t index);
 	Node *get_head();
 	Node *get_tail();
-	size_t len();
+	size_t len() const;
 
 	void push(int32_t val);
 	int insert(size_t index, int32_t val);

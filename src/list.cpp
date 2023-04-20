@@ -66,7 +66,7 @@ Node *List::get(size_t index) {
 Node *List::get_head() { return this->_head; }
 Node *List::get_tail() { return this->_tail; }
 
-size_t List::len() { return this->_len; }
+size_t List::len() const { return this->_len; }
 void List::push(int32_t val) {
 	auto node = new Node(val, nullptr, this->_tail);
 
@@ -84,7 +84,7 @@ int List::insert(size_t index, int32_t val) {
 	if (index == 0) {
 		auto old_head = this->_head;
 		this->_head = new_node;
-		new_node->setNext(old_head);
+		new_node->setPrevious(old_head);
 		old_head->setNext(new_node);
 		return 0;
 	}
