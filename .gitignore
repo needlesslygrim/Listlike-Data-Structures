@@ -285,4 +285,6 @@ _pkginfo.txt
 
 *.idea/
 *idea*
-cmake-build-debug-coverage
+Debug/
+Release/
+Debug-Coverage
