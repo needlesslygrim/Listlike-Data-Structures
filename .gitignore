@@ -288,3 +288,4 @@ _pkginfo.txt
 Debug/
 Release/
 Debug-Coverage
+cmake-build-debug
