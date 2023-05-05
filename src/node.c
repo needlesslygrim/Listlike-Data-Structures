@@ -10,12 +10,12 @@
  * initialised *must* be freed.
  *
  * Example use:
- * struct node_t *node = initialise_node(3, NULL, NULL);
- * struct node_t *next_node = initialise_node(4, NULL, node);
+ * struct dl_node_t *node = initialise_node(3, NULL, NULL);
+ * struct dl_node_t *next_node = initialise_dl_node(4, NULL, node);
  */
-struct node_t *initialise_node(int32_t val, struct node_t *next,
-							   struct node_t *previous) {
-	struct node_t *node = malloc(sizeof(struct node_t));
+struct dl_node_t *initialise_dl_node(int32_t val, struct dl_node_t *next,
+									 struct dl_node_t *previous) {
+	struct dl_node_t *node = malloc(sizeof(struct dl_node_t));
 
 	if (node == NULL) {
 		fprintf(stderr,
@@ -39,7 +39,7 @@ struct node_t *initialise_node(int32_t val, struct node_t *next,
  * 	previous: node->previous,
  * }
  */
-void print_node(struct node_t *node) {
+void print_dl_node(struct dl_node_t *node) {
 	printf("Node {\n  val: %d,\n  next: %ld,\n  previous: %ld\n}\n", node->val,
 		   (size_t)node->next, (size_t)node->previous);
 }

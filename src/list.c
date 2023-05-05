@@ -12,33 +12,33 @@
  *
  * Example use:
  * int32_t vals[6] = {1, 2, 3, 4, 5, 6};
- * struct list_t *list = initialise_list(vals, 6);
+ * struct dl_list_t *list = dl_initialise_list(vals, 6);
  * ...
- * delete_list(list);
+ * dl_delete_list(list);
  */
-struct list_t initialise_list(int32_t *vals, size_t length) {
-	struct list_t list = { NULL, NULL, length };
+struct dl_list_t dl_initialise_list(int32_t *vals, size_t length) {
+	struct dl_list_t list = {NULL, NULL, length };
 
 	list.len = length;
-	struct node_t *head = initialise_node((length > 0) ? vals[0] : 0, NULL, NULL);
+	struct dl_node_t *head = initialise_dl_node((length > 0) ? vals[0] : 0, NULL, NULL);
 	list.head = head;
 
 	if (length == 0) {
 		return list;
 	}
 
-	struct node_t *previous_node = initialise_node(vals[1], NULL, head);
+	struct dl_node_t *previous_node = initialise_dl_node(vals[1], NULL, head);
 	head->next = previous_node;
 
 	for (size_t i = 2; i < length - 1; i++) {
-		struct node_t *node = initialise_node(vals[i], NULL, previous_node);
+		struct dl_node_t *node = initialise_dl_node(vals[i], NULL, previous_node);
 
 		previous_node->next = node;
 		previous_node = node;
 	}
 
-	struct node_t *tail =
-		initialise_node(vals[length - 1], NULL, previous_node);
+	struct dl_node_t *tail =
+			initialise_dl_node(vals[length - 1], NULL, previous_node);
 	previous_node->next = tail;
 	list.tail = tail;
 
@@ -51,13 +51,13 @@ struct list_t initialise_list(int32_t *vals, size_t length) {
  *
  * Example use:
  * int32_t vals[6] = {1, 2, 3, 4, 5, 6};
- * struct list_t *list = initialise_list(vals, 6);
+ * struct dl_list_t *list = dl_initialise_list(vals, 6);
  * ...
- * delete_list(list);
+ * dl_delete_list(list);
  */
-void delete_list(struct list_t *list) {
-	struct node_t *current_node = list->head;
-	struct node_t *next_node;
+void dl_delete_list(struct dl_list_t *list) {
+	struct dl_node_t *current_node = list->head;
+	struct dl_node_t *next_node;
 	while ((next_node = current_node->next) != NULL) {
 		next_node->previous = NULL;
 		free(current_node);
@@ -76,15 +76,15 @@ void delete_list(struct list_t *list) {
  * the index given is longer than the length of the list, NULL will be returned.
  *
  * Example use:
- * struct node_t *node = list.get(3);
+ * struct dl_node_t *node = list.dl_get(3);
  * node->val++;
  */
-struct node_t *get(struct list_t *list, size_t index) {
+struct dl_node_t *dl_get(struct dl_list_t *list, size_t index) {
 	if (index > list->len) {
 		return NULL;
 	}
 
-	struct node_t *current_node = list->head;
+	struct dl_node_t *current_node = list->head;
 
 	if (index == 0) {
 		return current_node;
@@ -103,30 +103,30 @@ struct node_t *get(struct list_t *list, size_t index) {
  *
  * Example use:
  * print_list(list);
- * insert(list, 3, 12);
- * print_list(list);
+ * dl_insert(list, 3, 12);
+ * dl_print_list(list);
  *
  * Returns:
  * - 0 if successful
  * - 1 if index given > len
  */
-int insert(struct list_t *list, size_t index, int32_t val) {
+int dl_insert(struct dl_list_t *list, size_t index, int32_t val) {
 	if (index > list->len) {
 		return 1;
 	}
 
-	struct node_t *new_node = initialise_node(val, NULL, NULL);
+	struct dl_node_t *new_node = initialise_dl_node(val, NULL, NULL);
 
 	if (index == 0) {
-		struct node_t *old_head = list->head;
+		struct dl_node_t *old_head = list->head;
 		list->head = new_node;
 		new_node->next = old_head;
 		old_head->previous = new_node;
 		return 0;
 	}
 
-	struct node_t *node = get(list, index);
-	struct node_t *previous_node = node->previous;
+	struct dl_node_t *node = dl_get(list, index);
+	struct dl_node_t *previous_node = node->previous;
 	previous_node->next = new_node;
 	new_node->previous = previous_node;
 	new_node->next = node;
@@ -141,11 +141,11 @@ int insert(struct list_t *list, size_t index, int32_t val) {
  *
  * Example use:
  * print_list(list);
- * push(list, 12);
- * print_list();
+ * dl_push(list, 12);
+ * dl_print_list();
  */
-void push(struct list_t *list, int32_t val) {
-	struct node_t *node = initialise_node(val, NULL, list->tail);
+void dl_push(struct dl_list_t *list, int32_t val) {
+	struct dl_node_t *node = initialise_dl_node(val, NULL, list->tail);
 
 	list->tail->next = node;
 	list->tail = node;
@@ -158,11 +158,11 @@ void push(struct list_t *list, int32_t val) {
  *
  * Example use:
  * print_list(list)
- * printf("%d", pop(list));
- * print_list(list);
+ * printf("%d", dl_pop(list));
+ * dl_print_list(list);
  */
-int32_t pop(struct list_t *list) {
-	struct node_t *tail = list->tail;
+int32_t dl_pop(struct dl_list_t *list) {
+	struct dl_node_t *tail = list->tail;
 
 	int32_t val = tail->val;
 
@@ -189,25 +189,25 @@ int32_t pop(struct list_t *list) {
  *
  * Example use:
  * print_list(list)
- * printf("%d", remove_node(list, 3);
- * print_list(list);
+ * printf("%d", dl_remove_node(list, 3);
+ * dl_print_list(list);
  */
-int32_t remove_node(struct list_t *list, size_t index) {
+int32_t dl_remove_node(struct dl_list_t *list, size_t index) {
 	if (index == list->len) {
-		return pop(list);
+		return dl_pop(list);
 	}
 
 	if (index == 0) {
-		struct node_t *head = get(list, 0);
+		struct dl_node_t *head = dl_get(list, 0);
 		list->head = head->next;
 		list->head->previous = NULL;
 		free(head);
 	}
 
-	struct node_t *node = get(list, index);
+	struct dl_node_t *node = dl_get(list, index);
 	int value = node->val;
-	struct node_t *previous_node = node->previous;
-	struct node_t *next_node = node->next;
+	struct dl_node_t *previous_node = node->previous;
+	struct dl_node_t *next_node = node->next;
 
 	previous_node->next = next_node;
 	next_node->previous = previous_node;
@@ -228,7 +228,7 @@ int32_t remove_node(struct list_t *list, size_t index) {
  * 2 if the head == NULL;
  * 3 if the head == NULL;
  */
-int32_t check_list_validity(struct list_t *list) {
+int32_t dl_check_list_validity(struct dl_list_t *list) {
 	if (list == NULL) {
 		return 1;
 	} else if (list->head == NULL) {
@@ -244,14 +244,14 @@ int32_t check_list_validity(struct list_t *list) {
  * Print out a list from head->tail, returns the value that is returned by
  * check_validity when called with the list passed.
  */
-int32_t print_list(struct list_t *list) {
-	int validity = check_list_validity(list);
+int32_t dl_print_list(struct dl_list_t *list) {
+	int validity = dl_check_list_validity(list);
 	if (validity) {
 		return validity;
 	}
 
 	printf("(%d, ", list->head->val);
-	struct node_t *current_node = list->head->next;
+	struct dl_node_t *current_node = list->head->next;
 
 	while (current_node->next != NULL) {
 		printf("%d, ", current_node->val);
@@ -267,10 +267,10 @@ int32_t print_list(struct list_t *list) {
  * Prints out a list from tail->head, returns the value that is returned by
  * check_validity when called with the list passed.
  */
-int32_t print_list_reversed(struct list_t *list) {
-	struct node_t *current_node = list->tail;
+int32_t dl_print_list_reversed(struct dl_list_t *list) {
+	struct dl_node_t *current_node = list->tail;
 
-	int32_t validity = check_list_validity(list);
+	int32_t validity = dl_check_list_validity(list);
 	if (validity) {
 		return validity;
 	}
