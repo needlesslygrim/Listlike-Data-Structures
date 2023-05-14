@@ -5,51 +5,51 @@
 #include "list.h"
 #include "node.h"
 
-List::List(int32_t *vals, size_t length) {
-	this->_tail = nullptr;
-	this->_len = length;
+List::List() : m_head(nullptr), m_tail(nullptr), m_len(0){};
 
-	this->_head = new Node((length > 0) ? vals[0] : 0, nullptr, nullptr);
+List::List(int32_t *vals, size_t length) : m_len(length) {
+	this->m_head = new Node((length > 0) ? vals[0] : 0, nullptr, nullptr);
 
 	if (length == 0) {
+		this->m_tail = this->m_head;
 		return;
 	}
 
-	auto previous_node = new Node(vals[1], nullptr, this->_head);
-	this->_head->setNext(previous_node);
+	auto previous_node = new Node(vals[1], nullptr, this->m_head);
+	this->m_head->m_next = previous_node;
 
 	for (size_t i = 2; i < length - 1; i++) {
 		auto node = new Node(vals[i], nullptr, previous_node);
 
-		previous_node->setNext(node);
+		previous_node->m_next = node;
 		previous_node = node;
 	}
 
 	auto tail = new Node(vals[length - 1], nullptr, previous_node);
-	previous_node->setNext(tail);
-	this->_tail = tail;
+	previous_node->m_next = tail;
+	this->m_tail = tail;
 }
+
 List::~List() {
-	auto current_node = this->_head;
-	Node *next_node;
-	while ((next_node = current_node->getNext()) != nullptr) {
-		next_node->setPrevious(nullptr);
+	auto current_node = this->m_head;
+	;
+	auto next_node = current_node->m_next;
+
+	while (next_node != nullptr) {
 		delete current_node;
 		current_node = next_node;
+		next_node = current_node->m_next;
 	}
 
 	delete current_node;
-	this->_head = nullptr;
-	this->_tail = nullptr;
-	this->_len = 0;
 }
 
 Node *List::get(size_t index) {
-	if (index > this->_len) {
+	if (index > this->m_len) {
 		return nullptr;
 	}
 
-	auto current_node = this->_head;
+	auto current_node = this->m_head;
 
 	if (index == 0) {
 		return current_node;
@@ -63,27 +63,29 @@ Node *List::get(size_t index) {
 	return current_node;
 }
 
-Node *List::get_head() { return this->_head; }
-Node *List::get_tail() { return this->_tail; }
+Node *List::get_head() { return this->m_head; }
 
-size_t List::len() const { return this->_len; }
+Node *List::get_tail() { return this->m_tail; }
+
+size_t List::len() const { return this->m_len; }
+
 void List::push(int32_t val) {
-	auto node = new Node(val, nullptr, this->_tail);
+	auto node = new Node(val, nullptr, this->m_tail);
 
-	this->_tail = node;
-	this->_tail->setNext(node);
+	this->m_tail = node;
+	this->m_tail->setNext(node);
 }
 
 int List::insert(size_t index, int32_t val) {
-	if (index > this->_len) {
+	if (index > this->m_len) {
 		return 1;
 	}
 
 	auto new_node = new Node(val, nullptr, nullptr);
 
 	if (index == 0) {
-		auto old_head = this->_head;
-		this->_head = new_node;
+		auto old_head = this->m_head;
+		this->m_head = new_node;
 		new_node->setPrevious(old_head);
 		old_head->setNext(new_node);
 		return 0;
@@ -100,20 +102,20 @@ int List::insert(size_t index, int32_t val) {
 }
 
 int List::pop() {
-	auto tail = this->_tail;
+	auto tail = this->m_tail;
 	auto val = tail->getVal();
 
-	if (this->_head == this->_tail) {
-		delete this->_head;
-		this->_head = nullptr;
-		this->_tail = nullptr;
+	if (this->m_head == this->m_tail) {
+		delete this->m_head;
+		this->m_head = nullptr;
+		this->m_tail = nullptr;
 		return val;
 	}
 
-	this->_len--;
+	this->m_len--;
 
 	tail->getPrevious()->setNext(nullptr);
-	this->_tail = tail->getPrevious();
+	this->m_tail = tail->getPrevious();
 
 	delete tail;
 
@@ -121,16 +123,16 @@ int List::pop() {
 }
 
 int List::remove(size_t index) {
-	if (index == this->_len) {
+	if (index == this->m_len) {
 		return this->pop();
 	}
 
 	if (index == 0) {
-		auto head = this->_head;
+		auto head = this->m_head;
 		auto value = head->getVal();
 
-		this->_head = _head->getNext();
-		this->_head->setPrevious(nullptr);
+		this->m_head = m_head->getNext();
+		this->m_head->setPrevious(nullptr);
 		delete head;
 
 		return value;
@@ -143,16 +145,16 @@ int List::remove(size_t index) {
 
 	previous_node->setNext(next_node);
 	next_node->setPrevious(previous_node);
-	this->_len--;
+	this->m_len--;
 	delete node;
 
 	return value;
 }
 
 int List::is_valid() {
-	if (this->_head == nullptr) {
+	if (this->m_head == nullptr) {
 		return 1;
-	} else if (this->_tail == nullptr) {
+	} else if (this->m_tail == nullptr) {
 		return 2;
 	}
 
@@ -160,8 +162,8 @@ int List::is_valid() {
 }
 
 int List::print() {
-	printf("(%d, ", this->_head->getVal());
-	auto current_node = this->_head->getNext();
+	printf("(%d, ", this->m_head->getVal());
+	auto current_node = this->m_head->getNext();
 
 	while (current_node->getNext() != nullptr) {
 		printf("%d, ", current_node->getVal());
@@ -174,8 +176,8 @@ int List::print() {
 }
 
 int List::print_reversed() {
-	printf("(%d, ", this->_tail->getVal());
-	auto current_node = this->_tail->getPrevious();
+	printf("(%d, ", this->m_tail->getVal());
+	auto current_node = this->m_tail->getPrevious();
 
 	while (current_node->getPrevious() != nullptr) {
 		printf("%d, ", current_node->getVal());

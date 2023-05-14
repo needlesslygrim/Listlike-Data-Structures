@@ -7,16 +7,17 @@
 
 class List {
   private:
-	Node *_head;
-	Node *_tail;
-	size_t _len;
+	Node *m_head;
+	Node *m_tail;
+	size_t m_len;
 
   public:
+	List();
 	List(int32_t *vals, size_t length);
 	~List();
 	Node *get(size_t index);
-	Node *get_head();
-	Node *get_tail();
+	Node *getHead();
+	Node *getTail();
 	size_t len() const;
 
 	void push(int32_t val);
@@ -30,27 +31,5 @@ class List {
 	int print();
 	int print_reversed();
 };
-
-struct list_t {
-	struct node_t *head;
-	struct node_t *tail;
-	size_t len;
-};
-
-struct list_t initialise_list(int32_t *vals, size_t length);
-void delete_list(struct list_t *list);
-
-struct node_t *get(struct list_t *list, size_t index);
-
-void push(struct list_t *list, int32_t val);
-int insert(struct list_t *list, size_t index, int32_t val);
-
-int pop(struct list_t *list);
-int remove_node(struct list_t *list, size_t index);
-
-int check_list_validity(struct list_t *list);
-
-int print_list(struct list_t *list);
-int print_list_reversed(struct list_t *list);
 
 #endif // LIST_H

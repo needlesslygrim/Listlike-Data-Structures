@@ -4,21 +4,22 @@
 #include <cstdint>
 
 class Node {
-  private:
-	int32_t _val;
-	Node *_next;
-	Node *_previous;
+  public:
+	int32_t m_val;
+
+	friend class List;
 
   public:
+	Node();
+	explicit Node(int32_t val);
 	Node(int32_t val, Node *next, Node *previous);
+	Node *getNext() const;
+	Node *getPrevious() const;
 	void print() const;
 
-	int32_t getVal() const;
-	void setVal(int32_t val);
-	Node *getNext() const;
-	void setNext(Node *next);
-	Node *getPrevious() const;
-	void setPrevious(Node *previous);
+  private:
+	Node *m_next;
+	Node *m_previous;
 };
 
 #endif // NODE_H

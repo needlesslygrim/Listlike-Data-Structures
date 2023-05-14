@@ -2,10 +2,9 @@
 
 #include "list.h"
 
-
 int main() {
 	int32_t vals[5] = {0, 1, 2, 3, 4};
-	auto list = new List(vals, 5);
+	List list(vals, 5);
 	list->get(0)->print();
 	list->get(1)->print();
 	list->get(4)->print();
