@@ -4,6 +4,8 @@
 
 #include "node.h"
 
+namespace dl_list {
+
 Node::Node() : m_val(0), m_next(nullptr), m_previous(nullptr) {}
 
 Node::Node(int32_t val) : m_val(val), m_next(nullptr), m_previous(nullptr) {}
@@ -29,3 +31,4 @@ void Node::print() const {
 Node *Node::getNext() const { return m_next; }
 
 Node *Node::getPrevious() const { return m_previous; }
+} // namespace dl_list

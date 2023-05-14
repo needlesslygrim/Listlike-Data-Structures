@@ -1,22 +1,36 @@
 #include <cstdint>
 #include <cstdio>
-#include <cstdlib>
+#include <exception>
+#include <stdexcept>
+#include <cstring>
 
+#include "exceptions.h"
 #include "list.h"
 #include "node.h"
 
+namespace dl_list {
 List::List() : m_head(nullptr), m_tail(nullptr), m_len(0){};
+List::List(int32_t val) : m_len(1) {
+	auto node = new Node(val);
+	this->m_head = node;
+	this->m_tail = node;
+}
 
 List::List(int32_t *vals, size_t length) : m_len(length) {
-	this->m_head = new Node((length > 0) ? vals[0] : 0, nullptr, nullptr);
-
 	if (length == 0) {
-		this->m_tail = this->m_head;
+		throw std::invalid_argument("Invalid length");
+	}
+
+	auto head = new Node(vals[0]);
+	this->m_head = head;
+
+	if (length == 1) {
+		this->m_tail = head;
 		return;
 	}
 
-	auto previous_node = new Node(vals[1], nullptr, this->m_head);
-	this->m_head->m_next = previous_node;
+	auto previous_node = new Node(vals[1], nullptr, head);
+	head->m_next = previous_node;
 
 	for (size_t i = 2; i < length - 1; i++) {
 		auto node = new Node(vals[i], nullptr, previous_node);
@@ -31,8 +45,15 @@ List::List(int32_t *vals, size_t length) : m_len(length) {
 }
 
 List::~List() {
+	if (this->m_len == 0) {
+		return;
+	}
+	if (this->m_len == 1) {
+		delete this->m_head;
+		return;
+	}
 	auto current_node = this->m_head;
-	;
+
 	auto next_node = current_node->m_next;
 
 	while (next_node != nullptr) {
@@ -44,80 +65,86 @@ List::~List() {
 	delete current_node;
 }
 
-Node *List::get(size_t index) {
-	if (index > this->m_len) {
-		return nullptr;
+Node *List::operator[](size_t index) const {
+	if (index >= this->m_len) {
+		throw std::out_of_range("Index out of range");
+	}
+	if (index == 0) {
+		return this->m_head;
 	}
 
 	auto current_node = this->m_head;
 
-	if (index == 0) {
-		return current_node;
-	}
-
 	for (size_t i = 0; i < index; i++) {
-
 		current_node = current_node->getNext();
 	}
 
 	return current_node;
 }
 
-Node *List::get_head() { return this->m_head; }
+Node *List::getHead() const { return this->m_head; }
 
-Node *List::get_tail() { return this->m_tail; }
+Node *List::getTail() const { return this->m_tail; }
 
 size_t List::len() const { return this->m_len; }
 
 void List::push(int32_t val) {
-	auto node = new Node(val, nullptr, this->m_tail);
+	auto new_node = new Node(val, nullptr, this->m_tail);
 
-	this->m_tail = node;
-	this->m_tail->setNext(node);
+	this->m_tail->m_next = new_node;
+	this->m_tail = new_node;
+	this->m_len++;
 }
 
-int List::insert(size_t index, int32_t val) {
+void List::insert(size_t index, int32_t val) {
 	if (index > this->m_len) {
-		return 1;
+		throw std::out_of_range(
+			"Index out of range: greater than length of list");
 	}
 
-	auto new_node = new Node(val, nullptr, nullptr);
+	auto new_node = new Node(val);
 
 	if (index == 0) {
 		auto old_head = this->m_head;
+		old_head->m_previous= new_node;
+		new_node->m_next = old_head;
 		this->m_head = new_node;
-		new_node->setPrevious(old_head);
-		old_head->setNext(new_node);
-		return 0;
+		this->m_len++;
+		return;
+	} else if (index == this->m_len) {
+		this->push(val);
+		return;
 	}
 
-	auto node = this->get(index);
-	auto previous_node = node->getPrevious();
-	previous_node->setNext(new_node);
-	new_node->setPrevious(previous_node);
-	new_node->setNext(node);
-	node->setPrevious(new_node);
+	auto old_node_at_index = this->operator[](index);
+	auto previous_node = old_node_at_index->m_previous;
 
-	return 0;
+	previous_node->m_next = new_node;
+	new_node->m_previous = previous_node;
+	old_node_at_index->m_previous = new_node;
+	new_node->m_next = old_node_at_index;
+	this->m_len++;
 }
 
-int List::pop() {
-	auto tail = this->m_tail;
-	auto val = tail->getVal();
+int32_t List::pop() {
+	if (this->m_len == 0) {
+		throw empty_list_exception("Cannot pop value from empty list");
+	}
 
-	if (this->m_head == this->m_tail) {
+	auto val = this->m_tail->m_val;
+
+	if (this->m_len == 1) {
 		delete this->m_head;
 		this->m_head = nullptr;
 		this->m_tail = nullptr;
+		this->m_len--;
 		return val;
 	}
 
+	delete this->m_tail;
+	this->operator[](this->m_len - 1)->m_next = nullptr;
+	this->m_tail = this->operator[](this->m_len - 1);
 	this->m_len--;
-
-	tail->getPrevious()->setNext(nullptr);
-	this->m_tail = tail->getPrevious();
-
-	delete tail;
 
 	return val;
 }
@@ -129,29 +156,29 @@ int List::remove(size_t index) {
 
 	if (index == 0) {
 		auto head = this->m_head;
-		auto value = head->getVal();
+		auto value = head->m_val;
 
 		this->m_head = m_head->getNext();
-		this->m_head->setPrevious(nullptr);
+		this->m_head->m_previous = nullptr;
 		delete head;
 
 		return value;
 	}
 
-	auto node = this->get(index);
-	auto value = node->getVal();
+	auto node = this->operator[](index);
+	auto value = node->m_val;
 	auto previous_node = node->getPrevious();
 	auto next_node = node->getNext();
 
-	previous_node->setNext(next_node);
-	next_node->setPrevious(previous_node);
+	previous_node->m_next = next_node;
+	next_node->m_previous = previous_node;
 	this->m_len--;
 	delete node;
 
 	return value;
 }
 
-int List::is_valid() {
+int List::isValid() const {
 	if (this->m_head == nullptr) {
 		return 1;
 	} else if (this->m_tail == nullptr) {
@@ -161,30 +188,68 @@ int List::is_valid() {
 	return 0;
 }
 
-int List::print() {
-	printf("(%d, ", this->m_head->getVal());
+/*
+// Come back to later, not important at the moment
+//void List::toString(char* buffer, size_t size) {
+//	if (buffer == nullptr || size < 1) {
+//		throw std::invalid_argument("Buffer invalid or size < 1");
+//	}
+//	if (this->m_len == 0) {
+//		buffer = "()";
+//		return;
+//	}
+//	if (this->m_len == 1) {
+//		snprintf(buffer, size, "(%d)", this->m_head->m_val);
+//		return;
+//	}
+//	char *temp[size];
+//	snprintf("(%d, ", this->m_head->m_val);
+//	auto current_node = this->m_head->getNext();
+//
+//	while (current_node->getNext() != nullptr) {
+//		printf("%d, ", current_node->m_val);
+//		current_node = current_node->getNext();
+//	}
+//
+//	printf("%d)\n", current_node->m_val);
+//
+//	return 0;
+//}
+*/
+
+int List::print() const {
+	if (this->m_len == 0) {
+		printf("()");
+		return 0;
+	}
+	if (this->m_len == 1) {
+		printf("(%d)", this->m_head->m_val);
+		return 0;
+	}
+	printf("(%d, ", this->m_head->m_val);
 	auto current_node = this->m_head->getNext();
 
 	while (current_node->getNext() != nullptr) {
-		printf("%d, ", current_node->getVal());
+		printf("%d, ", current_node->m_val);
 		current_node = current_node->getNext();
 	}
 
-	printf("%d)\n", current_node->getVal());
+	printf("%d)\n", current_node->m_val);
 
 	return 0;
 }
 
-int List::print_reversed() {
-	printf("(%d, ", this->m_tail->getVal());
+int List::print_reversed() const {
+	printf("(%d, ", this->m_tail->m_val);
 	auto current_node = this->m_tail->getPrevious();
 
 	while (current_node->getPrevious() != nullptr) {
-		printf("%d, ", current_node->getVal());
+		printf("%d, ", current_node->m_val);
 		current_node = current_node->getPrevious();
 	}
 
-	printf("%d)\n", current_node->getVal());
+	printf("%d)\n", current_node->m_val);
 
 	return 0;
 }
+} // namespace dl_list

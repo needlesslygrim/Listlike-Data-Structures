@@ -2,7 +2,7 @@
 #define NODE_H
 
 #include <cstdint>
-
+namespace dl_list {
 class Node {
   public:
 	int32_t m_val;
@@ -21,5 +21,6 @@ class Node {
 	Node *m_next;
 	Node *m_previous;
 };
+} // namespace dl_list
 
 #endif // NODE_H

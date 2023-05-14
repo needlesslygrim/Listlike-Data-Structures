@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 
+namespace dl_list {
 class List {
   private:
 	Node *m_head;
@@ -13,23 +14,26 @@ class List {
 
   public:
 	List();
+	explicit List(int32_t val);
 	List(int32_t *vals, size_t length);
 	~List();
-	Node *get(size_t index);
-	Node *getHead();
-	Node *getTail();
+	Node *operator[](size_t index) const;
+	Node *getHead() const;
+	Node *getTail() const;
 	size_t len() const;
 
 	void push(int32_t val);
-	int insert(size_t index, int32_t val);
+	void insert(size_t index, int32_t val);
 
-	int pop();
-	int remove(size_t index);
+	int32_t pop();
+	int32_t remove(size_t index);
 
-	int is_valid();
+	int isValid() const;
 
-	int print();
-	int print_reversed();
+	int print() const;
+	int print_reversed() const;
 };
+
+} // namespace dl_list
 
 #endif // LIST_H
