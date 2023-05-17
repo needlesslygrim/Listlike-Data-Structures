@@ -1,8 +1,8 @@
 #include <cstdint>
 #include <cstdio>
+#include <cstring>
 #include <exception>
 #include <stdexcept>
-#include <cstring>
 
 #include "exceptions.h"
 #include "list.h"
@@ -65,7 +65,24 @@ List::~List() {
 	delete current_node;
 }
 
-Node *List::operator[](size_t index) const {
+int32_t &List::operator[](size_t index) const {
+	if (index >= this->m_len) {
+		throw std::out_of_range("Index out of range");
+	}
+	if (index == 0) {
+		return this->m_head->m_val;
+	}
+
+	auto current_node = this->m_head;
+
+	for (size_t i = 0; i < index; i++) {
+		current_node = current_node->getNext();
+	}
+
+	return current_node->m_val;
+}
+
+Node *List::get(size_t index) const {
 	if (index >= this->m_len) {
 		throw std::out_of_range("Index out of range");
 	}
@@ -106,7 +123,7 @@ void List::insert(size_t index, int32_t val) {
 
 	if (index == 0) {
 		auto old_head = this->m_head;
-		old_head->m_previous= new_node;
+		old_head->m_previous = new_node;
 		new_node->m_next = old_head;
 		this->m_head = new_node;
 		this->m_len++;
@@ -116,7 +133,7 @@ void List::insert(size_t index, int32_t val) {
 		return;
 	}
 
-	auto old_node_at_index = this->operator[](index);
+	auto old_node_at_index = this->get(index);
 	auto previous_node = old_node_at_index->m_previous;
 
 	previous_node->m_next = new_node;
@@ -141,15 +158,24 @@ int32_t List::pop() {
 		return val;
 	}
 
-	delete this->m_tail;
-	this->operator[](this->m_len - 1)->m_next = nullptr;
-	this->m_tail = this->operator[](this->m_len - 1);
+	auto old_tail = this->m_tail;
+	old_tail->m_previous->m_next = nullptr;
+	this->m_tail = old_tail->m_previous;
 	this->m_len--;
+
+	delete old_tail;
 
 	return val;
 }
 
 int List::remove(size_t index) {
+	if (index > this->m_len) {
+		throw std::out_of_range(
+			"Cannot remove node at index greater than length of list");
+	}
+	if (this->m_len == 0) {
+		throw empty_list_exception("Cannot remove value from empty list");
+	}
 	if (index == this->m_len) {
 		return this->pop();
 	}
@@ -158,14 +184,14 @@ int List::remove(size_t index) {
 		auto head = this->m_head;
 		auto value = head->m_val;
 
-		this->m_head = m_head->getNext();
-		this->m_head->m_previous = nullptr;
+		this->m_head = head->m_next;
+		this->m_len--;
 		delete head;
 
 		return value;
 	}
 
-	auto node = this->operator[](index);
+	auto node = this->get(index);
 	auto value = node->m_val;
 	auto previous_node = node->getPrevious();
 	auto next_node = node->getNext();
@@ -176,16 +202,6 @@ int List::remove(size_t index) {
 	delete node;
 
 	return value;
-}
-
-int List::isValid() const {
-	if (this->m_head == nullptr) {
-		return 1;
-	} else if (this->m_tail == nullptr) {
-		return 2;
-	}
-
-	return 0;
 }
 
 /*
@@ -240,6 +256,13 @@ int List::print() const {
 }
 
 int List::print_reversed() const {
+	if (this->m_len == 0) {
+		printf("()");
+		return 0;
+	} else if (this->m_len == 1) {
+		printf("(%d)", this->m_head->m_val);
+		return 0;
+	}
 	printf("(%d, ", this->m_tail->m_val);
 	auto current_node = this->m_tail->getPrevious();
 
@@ -252,4 +275,4 @@ int List::print_reversed() const {
 
 	return 0;
 }
-} // namespace dl_list
+}

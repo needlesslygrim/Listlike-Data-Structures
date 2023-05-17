@@ -7,24 +7,19 @@
 
 namespace dl_list {
 class List {
-  private:
-	Node *m_head;
-	Node *m_tail;
-	size_t m_len;
-
   public:
 	List();
 	explicit List(int32_t val);
 	List(int32_t *vals, size_t length);
 	~List();
-	Node *operator[](size_t index) const;
+	int32_t &operator[](size_t index) const;
+	Node *get(size_t index) const;
 	Node *getHead() const;
 	Node *getTail() const;
 	size_t len() const;
 
 	void push(int32_t val);
 	void insert(size_t index, int32_t val);
-
 	int32_t pop();
 	int32_t remove(size_t index);
 
@@ -32,6 +27,11 @@ class List {
 
 	int print() const;
 	int print_reversed() const;
+
+  private:
+	Node *m_head;
+	Node *m_tail;
+	size_t m_len;
 };
 
 } // namespace dl_list

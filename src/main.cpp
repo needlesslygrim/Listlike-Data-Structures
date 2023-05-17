@@ -1,27 +1,43 @@
-#include "list.h"
 #include <cstdint>
+#include <vector>
+
+#include "list.h"
 
 using namespace dl_list;
 
-auto CreateList() {
-	int32_t vals[5] = {1, 2, 3, 4, 5};
-	auto list = List(vals, 5);
-	list.push(6);
-	list.insert(0, 0);
-	list.insert(3, 3);
-	list.insert(list.len() - 1, 7);
-	list.insert(list.len(), 8);
-	for (size_t i = 0; i < list.len(); i++) {
-		list.operator[](i)->print();
+void bubblesort(List &list) {
+	for (size_t i = 0; i < list.len() - 1; i++) {
+		for (size_t j = 0; j < list.len() - 1; j++) {
+			if (list[j] > list[j + 1]) {
+				auto temp = list[j];
+				list[j] = list[j + 1];
+				list[j + 1] = temp;
+			}
+		}
 	}
-	list.print();
+}
 
+auto CreateList() {
+	int32_t vals[10] = {1,	  2,	3,	  4,	543, 215321, 4321, 4321, 43, 91};
+	auto list = List(vals, 10);
+	bubblesort(list);
+	list.print();
+		list.push(6);
+		list.insert(0, 0);
+		list.insert(3, 3);
+		list.insert(list.len() - 1, 7);
+		list.insert(list.len(), 8);
+		for (int32_t i = 0; i < list.len(); i++) {
+			list.remove(i);
+		}
+		list.print();
 	return list;
 }
 
 int main() {
+		CreateList();
 
-	CreateList();
+
 	//	delete list;
 	//	for (auto &list : lists) {
 	//		list = CreateList();
