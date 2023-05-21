@@ -52,6 +52,7 @@ List::~List() {
 		delete this->m_head;
 		return;
 	}
+
 	auto current_node = this->m_head;
 
 	auto next_node = current_node->m_next;
@@ -117,6 +118,9 @@ void List::insert(size_t index, int32_t val) {
 	if (index > this->m_len) {
 		throw std::out_of_range(
 			"Index out of range: greater than length of list");
+	} else if (index == this->m_len) {
+		this->push(val);
+		return;
 	}
 
 	auto new_node = new Node(val);
@@ -127,9 +131,6 @@ void List::insert(size_t index, int32_t val) {
 		new_node->m_next = old_head;
 		this->m_head = new_node;
 		this->m_len++;
-		return;
-	} else if (index == this->m_len) {
-		this->push(val);
 		return;
 	}
 
@@ -204,6 +205,17 @@ int List::remove(size_t index) {
 	return value;
 }
 
+void List::reverse() {
+	auto len = this->m_len;
+	if (len == 0 || len == 1) { return; }
+	len--;
+	for (size_t i = 0; i < len / 2; i++) {
+		int32_t temp = this->operator[](i);
+		this->operator[](i) = this->operator[](len - i);
+		this->operator[](len - i) = temp;
+	}
+}
+
 /*
 // Come back to later, not important at the moment
 //void List::toString(char* buffer, size_t size) {
@@ -233,15 +245,15 @@ int List::remove(size_t index) {
 //}
 */
 
-int List::print() const {
+void List::print() const {
 	if (this->m_len == 0) {
 		printf("()");
-		return 0;
-	}
-	if (this->m_len == 1) {
+		return;
+	} else if (this->m_len == 1) {
 		printf("(%d)", this->m_head->m_val);
-		return 0;
+		return;
 	}
+
 	printf("(%d, ", this->m_head->m_val);
 	auto current_node = this->m_head->getNext();
 
@@ -252,17 +264,18 @@ int List::print() const {
 
 	printf("%d)\n", current_node->m_val);
 
-	return 0;
+	return;
 }
 
-int List::print_reversed() const {
+void List::printReversed() const {
 	if (this->m_len == 0) {
 		printf("()");
-		return 0;
+		return;
 	} else if (this->m_len == 1) {
 		printf("(%d)", this->m_head->m_val);
-		return 0;
+		return;
 	}
+
 	printf("(%d, ", this->m_tail->m_val);
 	auto current_node = this->m_tail->getPrevious();
 
@@ -273,6 +286,6 @@ int List::print_reversed() const {
 
 	printf("%d)\n", current_node->m_val);
 
-	return 0;
+	return;
 }
 }

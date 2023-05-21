@@ -22,11 +22,10 @@ class List {
 	void insert(size_t index, int32_t val);
 	int32_t pop();
 	int32_t remove(size_t index);
+	void reverse();
 
-	int isValid() const;
-
-	int print() const;
-	int print_reversed() const;
+	void print() const;
+	void printReversed() const;
 
   private:
 	Node *m_head;
