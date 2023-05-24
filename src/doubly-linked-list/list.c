@@ -17,10 +17,11 @@
  * dl_delete_list(list);
  */
 struct dl_list_t dl_initialise_list(int32_t *vals, size_t length) {
-	struct dl_list_t list = {NULL, NULL, length };
+	struct dl_list_t list = {NULL, NULL, length};
 
 	list.len = length;
-	struct dl_node_t *head = initialise_dl_node((length > 0) ? vals[0] : 0, NULL, NULL);
+	struct dl_node_t *head =
+		initialise_dl_node((length > 0) ? vals[0] : 0, NULL, NULL);
 	list.head = head;
 
 	if (length == 0) {
@@ -31,14 +32,15 @@ struct dl_list_t dl_initialise_list(int32_t *vals, size_t length) {
 	head->next = previous_node;
 
 	for (size_t i = 2; i < length - 1; i++) {
-		struct dl_node_t *node = initialise_dl_node(vals[i], NULL, previous_node);
+		struct dl_node_t *node =
+			initialise_dl_node(vals[i], NULL, previous_node);
 
 		previous_node->next = node;
 		previous_node = node;
 	}
 
 	struct dl_node_t *tail =
-			initialise_dl_node(vals[length - 1], NULL, previous_node);
+		initialise_dl_node(vals[length - 1], NULL, previous_node);
 	previous_node->next = tail;
 	list.tail = tail;
 
@@ -68,7 +70,7 @@ void dl_delete_list(struct dl_list_t *list) {
 	list->head = NULL;
 	list->tail = NULL;
 	list->len = 0;
-//	free(list);
+	//	free(list);
 }
 
 /*

@@ -7,12 +7,12 @@ add_compile_options(-Wall -pedantic -Wextra)
 set(CMAKE_C_FLAGS_RELEASE  "${CMAKE_C_FLAGS} -g -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -Werror")
 
+file(GLOB DOUBLY_LINKED_SOURCES "src/doubly-linked-list/*.c" "src/doubly-linked-list/*.h")
+add_library(doubly_linked STATIC ${DOUBLY_LINKED_SOURCES})
 
-file(GLOB SOURCES "src/*.c" "src/*.h")
-list(REMOVE_ITEM SOURCES "src/main.c")
-
-add_library(list STATIC ${SOURCES})
+file(GLOB VEC_SOURCES "src/vec/*.c" "src/vec/*.h")
+add_library(vec STATIC ${VEC_SOURCES})
 
 add_executable(listfun "src/main.c")
 
-target_link_libraries(listfun list)
+target_link_libraries(listfun vec doubly_linked)

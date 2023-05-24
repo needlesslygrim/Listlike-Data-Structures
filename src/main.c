@@ -1,29 +1,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "list.h"
-#include "node.h"
+#include "vec/vec.h"
 
 int main() {
-	int32_t vals[6] = {0, 1, 2, 3, 4, 5};
-	struct dl_list_t list = dl_initialise_list(vals, 6);
-
-	dl_print_list(&list);
-	print_dl_node(dl_get(&list, 0));
-	print_dl_node(dl_get(&list, 1));
-	print_dl_node(dl_get(&list, list.len - 1));
-	print_dl_node(dl_get(&list, 2));
-
-	dl_push(&list, 5);
-	dl_print_list(&list);
-	print_dl_node(dl_get(&list, list.len - 1));
-	dl_insert(&list, 0, -1);
-	dl_print_list(&list);
-	print_dl_node(list.head);
-	print_dl_node(list.head->next);
-	print_dl_node(dl_get(&list, 0));
-	print_dl_node(dl_get(&list, 1));
-
-
-	dl_delete_list(&list);
+	struct vec_t vec = vec_new_with_capacity(3);
+	vec_set_val(&vec, 2, 0);
+	vec_set_val(&vec, 3, 1);
+	int64_t out;
+	vec_get_val(&vec, 1, &out);
+	printf("%d", out);
+	vec_deinitialise(&vec);
 }
