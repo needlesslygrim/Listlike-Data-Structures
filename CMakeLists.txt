@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.24)
 project(list C)
 set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_COMPILER g++)
+set(CMAKE_C_COMPILER gcc)
 
-
-add_compile_options(-Wall -pedantic -Wextra)
-set(CMAKE_C_FLAGS_RELEASE  "${CMAKE_C_FLAGS} -g -O0")
+add_compile_options(-Wall -pedantic -Wextra -DLOG_USE_COLOR -std=c2x)
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -g -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -Werror")
 
 file(GLOB DOUBLY_LINKED_SOURCES "src/doubly-linked-list/*.c" "src/doubly-linked-list/*.h")
