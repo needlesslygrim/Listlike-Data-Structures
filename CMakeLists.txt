@@ -13,6 +13,8 @@ add_library(doubly_linked STATIC ${DOUBLY_LINKED_SOURCES})
 file(GLOB VEC_SOURCES "src/vec/*.c" "src/vec/*.h")
 add_library(vec STATIC ${VEC_SOURCES})
 
+add_library(log STATIC "src/log.h" "src/log.c")
+
 add_executable(listfun "src/main.c")
 
-target_link_libraries(listfun vec doubly_linked)
+target_link_libraries(listfun vec doubly_linked log)
