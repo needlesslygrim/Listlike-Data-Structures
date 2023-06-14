@@ -3,9 +3,10 @@ project(list C)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_C_COMPILER gcc)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_compile_options(-Wall -pedantic -Wextra -DLOG_USE_COLOR -std=c2x)
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -g -O0")
+add_compile_options(-Wall -pedantic -Wextra -std=c2x -m64)
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -g -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -Werror")
 
 file(GLOB DOUBLY_LINKED_SOURCES "src/doubly-linked-list/*.c" "src/doubly-linked-list/*.h")

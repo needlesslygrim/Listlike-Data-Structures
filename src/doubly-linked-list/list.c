@@ -11,12 +11,12 @@
  * be deinitialised using the `delete_list` function.
  *
  * Example use:
- * int32_t vals[6] = {1, 2, 3, 4, 5, 6};
+ * i32 vals[6] = {1, 2, 3, 4, 5, 6};
  * struct dl_list_t *list = dl_initialise_list(vals, 6);
  * ...
  * dl_delete_list(list);
  */
-struct dl_list_t dl_initialise_list(int32_t *vals, size_t length) {
+struct dl_list_t dl_initialise_list(i32 *vals, usize length) {
 	struct dl_list_t list = {NULL, NULL, length};
 
 	list.len = length;
@@ -31,7 +31,7 @@ struct dl_list_t dl_initialise_list(int32_t *vals, size_t length) {
 	struct dl_node_t *previous_node = initialise_dl_node(vals[1], NULL, head);
 	head->next = previous_node;
 
-	for (size_t i = 2; i < length - 1; i++) {
+	for (usize i = 2; i < length - 1; i++) {
 		struct dl_node_t *node =
 			initialise_dl_node(vals[i], NULL, previous_node);
 
@@ -52,7 +52,7 @@ struct dl_list_t dl_initialise_list(int32_t *vals, size_t length) {
  * itself. List should not be used after.
  *
  * Example use:
- * int32_t vals[6] = {1, 2, 3, 4, 5, 6};
+ * i32 vals[6] = {1, 2, 3, 4, 5, 6};
  * struct dl_list_t *list = dl_initialise_list(vals, 6);
  * ...
  * dl_delete_list(list);
@@ -81,7 +81,7 @@ void dl_delete_list(struct dl_list_t *list) {
  * struct dl_node_t *node = list.dl_get(3);
  * node->val++;
  */
-struct dl_node_t *dl_get(struct dl_list_t *list, size_t index) {
+struct dl_node_t *dl_get(struct dl_list_t *list, usize index) {
 	if (index > list->len) {
 		return NULL;
 	}
@@ -92,7 +92,7 @@ struct dl_node_t *dl_get(struct dl_list_t *list, size_t index) {
 		return current_node;
 	}
 
-	for (size_t i = 0; i < index; i++) {
+	for (usize i = 0; i < index; i++) {
 		current_node = current_node->next;
 	}
 
@@ -112,7 +112,7 @@ struct dl_node_t *dl_get(struct dl_list_t *list, size_t index) {
  * - 0 if successful
  * - 1 if index given > len
  */
-int dl_insert(struct dl_list_t *list, size_t index, int32_t val) {
+int dl_insert(struct dl_list_t *list, usize index, i32 val) {
 	if (index > list->len) {
 		return 1;
 	}
@@ -146,7 +146,7 @@ int dl_insert(struct dl_list_t *list, size_t index, int32_t val) {
  * dl_push(list, 12);
  * dl_print_list();
  */
-void dl_push(struct dl_list_t *list, int32_t val) {
+void dl_push(struct dl_list_t *list, i32 val) {
 	struct dl_node_t *node = initialise_dl_node(val, NULL, list->tail);
 
 	list->tail->next = node;
@@ -163,10 +163,10 @@ void dl_push(struct dl_list_t *list, int32_t val) {
  * printf("%d", dl_pop(list));
  * dl_print_list(list);
  */
-int32_t dl_pop(struct dl_list_t *list) {
+i32 dl_pop(struct dl_list_t *list) {
 	struct dl_node_t *tail = list->tail;
 
-	int32_t val = tail->val;
+	i32 val = tail->val;
 
 	if (list->head == list->tail) {
 		free(list->head);
@@ -194,7 +194,7 @@ int32_t dl_pop(struct dl_list_t *list) {
  * printf("%d", dl_remove_node(list, 3);
  * dl_print_list(list);
  */
-int32_t dl_remove_node(struct dl_list_t *list, size_t index) {
+i32 dl_remove_node(struct dl_list_t *list, usize index) {
 	if (index == list->len) {
 		return dl_pop(list);
 	}
@@ -230,7 +230,7 @@ int32_t dl_remove_node(struct dl_list_t *list, size_t index) {
  * 2 if the head == NULL;
  * 3 if the head == NULL;
  */
-int32_t dl_check_list_validity(struct dl_list_t *list) {
+i32 dl_check_list_validity(struct dl_list_t *list) {
 	if (list == NULL) {
 		return 1;
 	} else if (list->head == NULL) {
@@ -246,7 +246,7 @@ int32_t dl_check_list_validity(struct dl_list_t *list) {
  * Print out a list from head->tail, returns the value that is returned by
  * check_validity when called with the list passed.
  */
-int32_t dl_print_list(struct dl_list_t *list) {
+i32 dl_print_list(struct dl_list_t *list) {
 	int validity = dl_check_list_validity(list);
 	if (validity) {
 		return validity;
@@ -269,10 +269,10 @@ int32_t dl_print_list(struct dl_list_t *list) {
  * Prints out a list from tail->head, returns the value that is returned by
  * check_validity when called with the list passed.
  */
-int32_t dl_print_list_reversed(struct dl_list_t *list) {
+i32 dl_print_list_reversed(struct dl_list_t *list) {
 	struct dl_node_t *current_node = list->tail;
 
-	int32_t validity = dl_check_list_validity(list);
+	i32 validity = dl_check_list_validity(list);
 	if (validity) {
 		return validity;
 	}
