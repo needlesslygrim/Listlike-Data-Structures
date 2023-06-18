@@ -1,5 +1,13 @@
-# Lists(?)
-I have finished writing the doubly-linked list, due to lack of interest after months of working on it, currently the most usable implementation is the C++ version, on the `cpp` branch. The `rust` branch contains a prototype that was the cause for me stopping, as I couldn't be bothered to write any more code for this. I will now start on an implementation of a Vector in C, which I will perhaps port to Rust.
-~~A very bad doubly linked list library I'm writing as a learning exercise, that might become a collection of list-like data structures soon. The master branch is written in C, but there is a work in progress C++ version on the `cpp` branch. The C++ version is halfway between C with classes and full on C++, for I've tried to keep the C feel, not using `std::string` etc, but it uses exceptions and has operator overloading, so it's nearing a point where I might start using the C++ stl. Both versions are currently riddled with logic bugs, which means that often the list will become invalid, but I'm working on fixing those. Once those are finished I might start on a proper Rust implementation, which I haven't done yet because of an abundance of double free bugs in my original (private) Rust version.~~
+# A collection of a few (two at the moment) data structures
 
-I don't really know C (or C++, and my Rust is quite rusty) so please excuse any bad code, although don't hesitate to suggest improvements!
+This repo contains a C, C++, and a broken Rust version of a doubly-linked list which I wrote for fun. I am cuurrently writing a vector in C (a growable array not the physics vector), which I will port to C++ and Rust once it is finished. The `master` branch contains the C versions, `cpp` contains the C++ versions, and the `rust` branch contains any Rust codee. I'm doing these projects to learn C and C++ so they might not contain great code, so suggestions are welcome.
+
+## Building
+The C/C++ projects are built with CMake and GCC, since as far as I know Clang support for `c2x` is not as good as GCC's. Each data structure has its own library, which is statically linked into the `listfun` executable which I use for testing. Thus you can build with normal CMake commands, e.g. 
+``` bash
+mkdir debug
+cd debug
+cmake ../ -D CMAKE_BUILD_TYPE=Debug -G=Ninja
+```
+
+The Rust version is built with cargo, so a simple `cargo run` will suffice.

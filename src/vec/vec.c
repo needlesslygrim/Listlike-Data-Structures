@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../defs.h"
-#include "../log.h"
-#include "vec.h"
+#include <log.h>
+#include <defs.h>
+#include <vec.h>
 
 struct vec_t vec_new(void) {
 	// FIXME: clang-format is making this ugly, clang-format pls fix
@@ -13,20 +13,86 @@ struct vec_t vec_new(void) {
 	return vec;
 }
 
-enum result vec_pop(struct vec_t *vec, i64 *out) {
+struct vec_t vec_new_with_capacity(usize cap) {
+	assert(cap != 0, "cannot initialise a vec using `vec_new_with_capacity()` "
+					 "with capacity == 0");
+	i64 *buffer = xcalloc(cap, 8);
+	struct vec_t vec = {buffer, 0, cap};
+	log_debug("vec initialised with size: %ld", cap);
 
-	// TODO: Look at this, I think we should punish users
-	// for giving us nullptrs :^)
-	if (vec == NULL) {
-		return NULL_PTR;
-	} else if (vec->len == 0) {
-		return OK;
+	return vec;
+}
+
+void vec_set_at(struct vec_t *vec, usize index, i64 val) {
+	assert(vec != NULL, "null pointer passed to `vec_set_val()`");
+	assert(index < vec->len, "index %ld >= than length of vec %ld, in `vec_set_at()`", index, vec->len);
+
+	log_trace("setting value of vec at index %ld, as %ld", index, val);
+	vec->buffer[index] = val;
+}
+
+void vec_get_at(struct vec_t *vec, usize index, i64 *out) {
+	assert(vec != NULL, "null pointer passed to `vec_set_val()` as `vec`");
+	assert(out != NULL, "null pointer passed to `vec_set_val()` as `out`");
+	assert(index < vec->len, "index %ld >= than length of vec %ld, in `vec_get_at()`", index, vec->len);
+
+	*out = vec->buffer[index];
+}
+
+void vec_append(struct vec_t *vec, i64 val) {
+	assert(vec != NULL, "null pointer passed to `vec_append()`");
+
+	if (vec->cap < vec->len + 1) {
+		vec_grow(vec);
+	}
+	vec->len++;
+	vec->buffer[vec->len - 1] = val;
+	if (vec_is_overly_large(vec)) {
+		vec_shrink(vec);
+	}
+}
+
+void vec_insert(struct vec_t *vec, usize index, i64 val) {
+	assert(vec != NULL, "null pointer passed to `vec_insert()`");
+	assert(index <= vec->len, "index %ld > than length of vec %ld in `vec_insert()`", index,
+		   vec->len);
+
+	if (vec->cap < vec->len + 1) {
+		vec_grow(vec);
 	}
 
-	vec->len--;
+	if (index == vec->len) {
+		vec_append(vec, val);
+		return;
+	}
+	log_trace("moving data from i to i + 1");
+	// Move all data within buffer to one index further on
+	// 1. Say we have an array [1,2,3,4], insert '5' to index 2
+	// 2. We need to move from 4 - 2 (2) to 2 + 1 (3)
+	// 3. We need to move 4 - 2 elements
+	//
+
+	memmove(vec->buffer + index + 1, vec->buffer + index,
+			(vec->len - index) * sizeof(i64));
+	vec->len++;
+	vec->buffer[index] = val;
+
+	if (vec_is_overly_large(vec)) {
+		vec_shrink(vec);
+	}
+}
+
+void vec_pop(struct vec_t *vec, i64 *out) {
+	assert(vec != NULL, "null pointer passed to `vec_pop()`");
+	if (vec->len == 0) {
+		return;
+	}
+
 	if (out != NULL) {
 		*out = vec->buffer[vec->len];
 	}
+
+	vec->len--;
 
 	/*
 	 * I don't think we need this, because we can't read this data anyway
@@ -37,55 +103,14 @@ enum result vec_pop(struct vec_t *vec, i64 *out) {
 
 	// Shrink vec if necessary
 	if (vec_is_overly_large(vec)) {
-		shrink_vec(vec);
+		vec_shrink(vec);
 	}
-	return OK;
 }
 
-enum result vec_grow(struct vec_t *vec) {
-	if (vec->cap == 0 || vec->buffer == NULL) {
-		vec->cap = 1;
-		i64 *buffer = xcalloc(vec->cap, 8);
-
-		vec->buffer = buffer;
-		return OK;
-	}
-	// Increase capacity and reallocate buffer
-	vec->cap *= 2;
-	log_trace("growing vec from capacity: %ld, to capacity: %ld", vec->cap / 2,
-			  vec->cap);
-	i64 *new_buffer = xrealloc(vec->buffer, vec->cap * 8);
-
-	vec->buffer = new_buffer;
-	return OK;
-}
-enum result vec_shrink(struct vec_t *vec) {
-	log_trace("shrinking vec from capacity: %ld, to capacity: %ld", vec->cap,
-			  vec->len);
-
-	vec->cap = vec->len;
-	i64 *new_buffer = xrealloc(vec->buffer, vec->cap * 8);
-
-	vec->buffer = new_buffer;
-	return OK;
-}
-
-struct vec_t vec_new_with_capacity(usize cap) {
-	i64 *buffer = xcalloc(cap, 8);
-	struct vec_t vec = {buffer, 0, cap};
-	log_debug("vec initialised with size: %ld", cap);
-
-	return vec;
-}
-
-enum result vec_remove(struct vec_t *vec, usize index, i64 *out) {
-	if (vec == NULL) {
-		return NULL_PTR; // TODO: Look at this, I think we should punish users
-						 // for giving us nullptrs :^)
-	} else if (index >= vec->len) {
-		log_fatal("index %ld >= than length list of vec %ld", index, vec->len);
-		exit(OUT_OF_BOUNDS);
-	}
+void vec_remove(struct vec_t *vec, usize index, i64 *out) {
+	assert(vec != NULL, "null pointer passed to `vec_remove()`");
+	assert(index >= vec->len, "index %ld >= than length of vec %ld in `vec_remove()`", index,
+		   vec->len);
 
 	log_trace("removing element: {%ld} from vec at index %ld",
 			  vec->buffer[index], index);
@@ -112,98 +137,65 @@ enum result vec_remove(struct vec_t *vec, usize index, i64 *out) {
 	vec->len--;
 
 	if (vec_is_overly_large(vec)) {
-		shrink_vec(vec);
+		vec_shrink(vec);
 	}
-	return OK;
+}
+
+void vec_grow(struct vec_t *vec) {
+	assert(vec != NULL, "null pointer passed to `vec_grow()`");
+
+	if (vec->cap == 0 || vec->buffer == NULL) {
+		vec->cap = 1;
+		vec->buffer = xcalloc(vec->cap, 8);
+		return;
+	}
+	// Increase capacity and reallocate buffer
+	vec->cap *= 2;
+	log_trace("growing vec from capacity: %ld, to capacity: %ld", vec->cap / 2,
+			  vec->cap);
+	vec->buffer = xrealloc(vec->buffer, vec->cap * 8);
+}
+
+void vec_grow_to(struct vec_t *vec, usize cap) {
+	assert(vec != NULL, "null pointer passed to `vec_grow_to()`");
+
+	assert(cap != 0, "cannot grow vec to size 0 in `vec_grow_to()`");
+	assert(
+		cap >= vec->cap,
+		"cannot grow vec to cap (%ld) <= existing cap (%ld) in `vec_grow_to()`",
+		cap, vec->cap);
+	vec->cap = cap;
+	vec->buffer = xrealloc(vec->buffer, cap * 8);
+}
+
+void vec_shrink(struct vec_t *vec) {
+	assert(vec != NULL, "null pointer passed to `vec_shrink()`");
+	assert(vec->len != 0, "vec length cannot be equal to zero when shrinking a "
+						  "vec in `vec_grow()`");
+
+	log_trace("shrinking vec from capacity: %ld, to capacity: %ld", vec->cap,
+			  vec->len);
+
+	vec->cap = vec->len;
+	vec->buffer = xrealloc(vec->buffer, vec->cap * 8);;
 }
 
 bool vec_is_overly_large(struct vec_t *vec) {
+	assert(vec != NULL, "null pointer passed to `vec_is_overly_large()`");
 	return vec->len != 0 && vec->cap > vec->len * 2;
 }
-enum result vec_append(struct vec_t *vec, i64 val) {
-	if (vec == NULL) {
-		return NULL_PTR; // TODO: Look at this, I think we should punish users
-						 // for giving us nullptrs :^)
-	} else if (vec->cap < vec->len + 1) {
-		vec_grow(vec);
-	}
-	vec->len++;
-	vec->buffer[vec->len - 1] = val;
-	if (vec_is_overly_large(vec)) {
-		shrink_vec(vec);
-	}
-	return OK;
-}
 
-enum result vec_insert(struct vec_t *vec, usize index, i64 val) {
-	if (vec == NULL) {
-		return NULL_PTR; // TODO: Look at this, I think we should punish users
-						 // for giving us nullptrs :^)
-	} else if (index > vec->len) {
-		log_error("index %ld greater than length of vec %ld", index, vec->len);
-		exit(OUT_OF_BOUNDS);
-	}
-	if (vec->cap < vec->len + 1) {
-		vec_grow(vec);
-	}
+void vec_print(struct vec_t *vec) {
+	assert(vec != NULL, "null pointer passed to `vec_print()`");
 
-	if (index == vec->len) {
-		return vec_append(vec, val);
-	}
-	log_trace("moving data from i to i + 1");
-	// Move all data within buffer to one index further on
-	// 1. Say we have an array [1,2,3,4], insert '5' to index 2
-	// 2. We need to move from 4 - 2 (2) to 2 + 1 (3)
-	// 3. We need to move 4 - 2 elements
-	//
-
-	memmove(vec->buffer + index + 1, vec->buffer + index,
-			(vec->len - index) * sizeof(i64));
-	vec->len++;
-	vec->buffer[index] = val;
-
-	if (vec_is_overly_large(vec)) {
-		shrink_vec(vec);
-	}
-	return OK;
-}
-
-enum result vec_set_val(struct vec_t *vec, usize index, i64 val) {
-	if (index >= vec->len) {
-		log_error("index %ld greater than length list of vec %ld", index,
-				  vec->len);
-		exit(OUT_OF_BOUNDS);
-	}
-	vec->buffer[index] = val;
-	log_trace("setting value of vec at index %ld, as %ld", index, val);
-
-	return OK;
-}
-
-// FIXME: I don't like using the out parameter
-enum result vec_get_val(struct vec_t *vec, usize index, i64 *out) {
-	if (index >= vec->len) {
-		log_fatal("index %ld greater than length list of vec %ld", index,
-				  vec->len);
-		exit(OUT_OF_BOUNDS);
-	}
-	*out = vec->buffer[index];
-
-	return OK;
-}
-// TODO: Should this be inlined???
-
-enum result vec_print(struct vec_t *vec) {
 	log_trace("starting to print vec");
 	log_trace("printing first element");
-	if (vec == NULL) {
-		return NULL_PTR;
-	} else if (vec->len == 0) {
+	if (vec->len == 0) {
 		printf("[]");
-		return OK;
+		return;
 	} else if (vec->len == 1) {
 		printf("[%ld]", *vec->buffer);
-		return OK;
+		return;
 	}
 
 	printf("[%ld, ", vec->buffer[0]);
@@ -212,8 +204,12 @@ enum result vec_print(struct vec_t *vec) {
 	}
 	log_trace("printing last element");
 	printf("%ld]\n", vec->buffer[vec->len - 1]);
-
-	return OK;
 }
 
-void vec_deinitialise(struct vec_t *vec) { free(vec->buffer); }
+void vec_deinitialise(struct vec_t *vec) {
+	assert(vec != NULL, "null pointer passed to `vec_deinitialise()`");
+	if (vec->buffer == NULL) { return; }
+
+	free(vec->buffer);
+	vec->buffer = NULL;
+}

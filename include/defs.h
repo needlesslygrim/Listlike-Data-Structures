@@ -59,18 +59,23 @@ static void *xrealloc(void *ptr, usize size) {
 	return buffer;
 }
 
-// Assert that can be enabled with conditional compilation
-// Credit: Beej's C Programming Guide, Chapter: The C Preprocessor
 #if ASSERT_ENABLED
-#define assert(condition, message)                                             \
+/// Assert that can be enabled with conditional compilation, modified to support
+/// `__VA_ARGS__`.
+/// Original Credit: Beej's C Programming Guide, Chapter: The C Preprocessor
+// Uses a hack to put the message inside the format string, which could be a bad
+// way of doing it but I don't know a better one. Also uses double # to swallow
+// the comma if no `__VA_ARGS__` are passed.
+#define assert(condition, message, ...)                                        \
 	do {                                                                       \
 		if (!(condition)) {                                                    \
-			fprintf(stderr, __FILE__ ":%d: assertion %s failed: %s\n",         \
-					__LINE__, #condition, message);                            \
+			fprintf(stderr, __FILE__ ":%d: assertion `%s` failed: " message "\n", \
+					__LINE__, #condition, ##__VA_ARGS__);                      \
 			exit(1);                                                           \
 		}                                                                      \
 	} while (0)
 #else
-#define assert(c, m) // Empty macro if not enabled
+/// Empty macro if not enabled
+#define assert(c, m, ...)
 #endif
 #endif // DEFS_H

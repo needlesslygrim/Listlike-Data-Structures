@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "../defs.h"
+#include <defs.h>
 
 struct dl_node_t {
 	int32_t val;

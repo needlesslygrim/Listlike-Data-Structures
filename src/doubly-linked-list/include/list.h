@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../defs.h"
+#include <defs.h>
 
 struct dl_list_t {
 	struct dl_node_t *head;
